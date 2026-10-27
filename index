@@ -1,122 +1,843 @@
-/**
- * KLUB CATUR — API Google Apps Script untuk versi GitHub Pages
- * Data disimpan di spreadsheet induk dalam 3 sheet: Siswa, Absensi, Pertandingan.
- * Buat script ini dari Google Sheets (Ekstensi > Apps Script).
- */
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Klub Catur · Manajemen Ekstrakurikuler</title>
+<script>
+  window.onerror = function (msg) {
+    var v = document.getElementById('view-dashboard');
+    if (v) { v.hidden = false; v.innerHTML = '<div style="background:#fff;border:1px solid #D7DBD2;border-radius:14px;padding:20px;font-size:14px">Aplikasi gagal berjalan di browser ini: <b></b><br>Coba buka dengan Google Chrome versi terbaru.</div>'; v.querySelector('b').textContent = msg; }
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Public Sans,system-ui,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0}.inset-x-0{left:0;right:0}.inset-y-0{top:0;bottom:0}.bottom-0{bottom:0}.bottom-24{bottom:6rem}.left-0{left:0}.left-1\/2{left:50%}.z-20{z-index:20}.z-30{z-index:30}.z-50{z-index:50}.z-\[60\]{z-index:60}.col-span-2{grid-column:span 2/span 2}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-7{margin-bottom:1.75rem}.ml-1{margin-left:.25rem}.ml-auto{margin-left:auto}.mr-1{margin-right:.25rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-14{height:3.5rem}.h-2\.5{height:.625rem}.h-20{height:5rem}.h-28{height:7rem}.h-3{height:.75rem}.h-full{height:100%}.max-h-\[88vh\]{max-height:88vh}.min-h-screen{min-height:100vh}.\!w-auto{width:auto!important}.w-10{width:2.5rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-\[4\.6rem\]{width:4.6rem}.w-full{width:100%}.min-w-0{min-width:0}.max-w-6xl{max-width:72rem}.max-w-full{max-width:100%}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-x-1\/2,.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-\[1fr_auto_1fr\]{grid-template-columns:1fr auto 1fr}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-x-5{-moz-column-gap:1.25rem;column-gap:1.25rem}.gap-y-2{row-gap:.5rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-\[\#ECEEE8\]>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(236 238 232/var(--tw-divide-opacity,1))}.self-start{align-self:flex-start}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-xl{border-radius:.75rem}.rounded-t-2xl{border-top-left-radius:1rem;border-top-right-radius:1rem}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-line{--tw-border-opacity:1;border-color:rgb(215 219 210/var(--tw-border-opacity,1))}.border-white\/10{border-color:hsla(0,0%,100%,.1)}.border-white\/5{border-color:hsla(0,0%,100%,.05)}.bg-\[\#E3E6DE\]{--tw-bg-opacity:1;background-color:rgb(227 230 222/var(--tw-bg-opacity,1))}.bg-\[\#F4F5F1\]{--tw-bg-opacity:1;background-color:rgb(244 245 241/var(--tw-bg-opacity,1))}.bg-\[\#F7F8F4\]{--tw-bg-opacity:1;background-color:rgb(247 248 244/var(--tw-bg-opacity,1))}.bg-\[\#FBFAF5\]{--tw-bg-opacity:1;background-color:rgb(251 250 245/var(--tw-bg-opacity,1))}.bg-ebony{--tw-bg-opacity:1;background-color:rgb(36 33 29/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-0{padding:0}.p-10{padding:2.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-7{padding:1.75rem}.p-8{padding:2rem}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-28{padding-bottom:7rem}.pb-6{padding-bottom:1.5rem}.pl-6{padding-left:1.5rem}.pt-2{padding-top:.5rem}.pt-6{padding-top:1.5rem}.pt-7{padding-top:1.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.align-\[-1px\]{vertical-align:-1px}.font-display{font-family:"Young Serif",Georgia,serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)}.leading-none{line-height:1}.leading-tight{line-height:1.25}.tracking-widest{letter-spacing:.1em}.text-\[\#8f877a\]{--tw-text-opacity:1;color:rgb(143 135 122/var(--tw-text-opacity,1))}.text-\[\#A79F90\]{--tw-text-opacity:1;color:rgb(167 159 144/var(--tw-text-opacity,1))}.text-brass{--tw-text-opacity:1;color:rgb(181 137 58/var(--tw-text-opacity,1))}.text-brick{--tw-text-opacity:1;color:rgb(164 72 58/var(--tw-text-opacity,1))}.text-ebony{--tw-text-opacity:1;color:rgb(36 33 29/var(--tw-text-opacity,1))}.text-felt{--tw-text-opacity:1;color:rgb(63 94 75/var(--tw-text-opacity,1))}.text-ivory{--tw-text-opacity:1;color:rgb(241 232 212/var(--tw-text-opacity,1))}.text-stone-300{--tw-text-opacity:1;color:rgb(214 211 209/var(--tw-text-opacity,1))}.text-stone-400{--tw-text-opacity:1;color:rgb(168 162 158/var(--tw-text-opacity,1))}.text-stone-500{--tw-text-opacity:1;color:rgb(120 113 108/var(--tw-text-opacity,1))}.text-stone-600{--tw-text-opacity:1;color:rgb(87 83 78/var(--tw-text-opacity,1))}.underline-offset-2{text-underline-offset:2px}.opacity-0{opacity:0}.opacity-80{opacity:.8}.opacity-90{opacity:.9}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-2xl,.shadow-lg{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.hover\:text-brick:hover{--tw-text-opacity:1;color:rgb(164 72 58/var(--tw-text-opacity,1))}.hover\:text-ebony:hover{--tw-text-opacity:1;color:rgb(36 33 29/var(--tw-text-opacity,1))}.group:hover .group-hover\:underline,.hover\:underline:hover{text-decoration-line:underline}@media (min-width:640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:hidden{display:none}.sm\:max-w-lg{max-width:32rem}.sm\:flex-row{flex-direction:row}.sm\:items-end{align-items:flex-end}.sm\:items-center{align-items:center}.sm\:gap-1\.5{gap:.375rem}.sm\:gap-3{gap:.75rem}.sm\:self-auto{align-self:auto}.sm\:rounded-2xl{border-radius:1rem}.sm\:p-5{padding:1.25rem}.sm\:p-6{padding:1.5rem}.sm\:p-8{padding:2rem}.sm\:px-5{padding-left:1.25rem;padding-right:1.25rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}}@media (min-width:768px){.md\:bottom-8{bottom:2rem}.md\:ml-64{margin-left:16rem}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-64{width:16rem}.md\:pb-12{padding-bottom:3rem}.md\:pt-10{padding-top:2.5rem}.md\:text-\[2\.4rem\]{font-size:2.4rem}.md\:text-\[2\.6rem\]{font-size:2.6rem}}@media (min-width:1024px){.lg\:col-span-1{grid-column:span 1/span 1}.lg\:col-span-2{grid-column:span 2/span 2}.lg\:col-span-3{grid-column:span 3/span 3}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-center{align-items:center}.lg\:px-10{padding-left:2.5rem;padding-right:2.5rem}}</style>
+<style>
+  :root { --ebony:#24211D; --ivory:#F1E8D4; --felt:#3F5E4B; --brass:#B5893A; --brick:#A4483A; --slate:#4B6A88; --line:#D7DBD2; }
+  html, body { background:#E8EBE4; }
+  body { font-family:'Public Sans', system-ui, sans-serif; color:var(--ebony); -webkit-font-smoothing:antialiased; }
+  .checker { background: repeating-conic-gradient(var(--ivory) 0 25%, var(--felt) 0 50%) 0 0 / 14px 14px; }
+  .checker-dark { background: repeating-conic-gradient(#3a352f 0 25%, #2b2722 0 50%) 0 0 / 22px 22px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.4rem; padding:.6rem 1rem; border-radius:10px; font-weight:600; font-size:.9rem; transition:background .15s, color .15s, border-color .15s; }
+  .btn-primary { background:var(--ebony); color:var(--ivory); }
+  .btn-primary:hover { background:#3a352f; }
+  .btn-ghost { background:#fff; border:1px solid var(--line); color:var(--ebony); }
+  .btn-ghost:hover { background:#F3F4EF; }
+  .btn-danger { background:#fff; border:1px solid #E5C9C3; color:var(--brick); }
+  .btn-danger:hover { background:#FBF1EF; }
+  .field { width:100%; border:1px solid var(--line); border-radius:10px; padding:.6rem .75rem; background:#fff; font-size:.95rem; }
+  .field:focus { outline:2px solid var(--brass); outline-offset:1px; border-color:transparent; }
+  :focus-visible { outline:2px solid var(--brass); outline-offset:2px; }
+  .nav-btn { display:flex; align-items:center; gap:.75rem; width:100%; padding:.7rem .9rem; border-radius:10px; color:#CFC6B4; font-weight:500; position:relative; }
+  .nav-btn:hover { background:rgba(241,232,212,.06); color:#fff; }
+  .nav-btn.active { background:rgba(241,232,212,.1); color:#fff; }
+  .nav-btn.active::before { content:''; position:absolute; left:-.75rem; top:.55rem; bottom:.55rem; width:3px; border-radius:3px; background:var(--brass); }
+  .nav-btn .glyph { font-size:1.35rem; line-height:1; width:1.5rem; text-align:center; }
+  .mnav-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:.5rem 0 .45rem; font-size:.7rem; color:#A79F90; }
+  .mnav-btn .glyph { font-size:1.35rem; line-height:1.1; }
+  .mnav-btn.active { color:#fff; }
+  .mnav-btn.active .glyph { color:var(--brass); }
+  .st { min-width:2.5rem; padding:.45rem .55rem; border-radius:8px; border:1px solid var(--line); font-weight:600; font-size:.8rem; color:#6b6f66; background:#fff; transition:background .12s, color .12s; }
+  .st:hover { background:#F3F4EF; }
+  .st.on.H { background:var(--felt); border-color:var(--felt); color:#fff; }
+  .st.on.I { background:var(--slate); border-color:var(--slate); color:#fff; }
+  .st.on.S { background:var(--brass); border-color:var(--brass); color:#fff; }
+  .st.on.A { background:var(--brick); border-color:var(--brick); color:#fff; }
+  .chip { display:inline-flex; align-items:center; gap:.35rem; font-size:.78rem; padding:.2rem .55rem; border-radius:999px; background:#F1F2EE; color:#4d5049; }
+  .dot { width:.55rem; height:.55rem; border-radius:999px; display:inline-block; }
+  .pc { width:.7rem; height:.7rem; border-radius:3px; display:inline-block; flex:none; border:1px solid #9a9488; }
+  .pc.w { background:#fff; } .pc.b { background:var(--ebony); border-color:var(--ebony); }
+  .score { font-family:'Young Serif', Georgia, serif; font-size:.95rem; padding:.15rem .5rem; border-radius:6px; background:#F1F2EE; white-space:nowrap; }
+  .res-btn { border:1.5px solid var(--line); border-radius:12px; padding:.75rem .5rem; background:#fff; text-align:center; transition:border-color .12s, background .12s; }
+  .res-btn:hover { background:#F7F7F3; }
+  .res-btn.on { border-color:var(--ebony); background:var(--ebony); color:var(--ivory); }
+  .seg { display:inline-flex; background:#DDE1D8; border-radius:10px; padding:3px; gap:2px; }
+  .seg button { padding:.45rem .85rem; border-radius:8px; font-size:.85rem; font-weight:600; color:#585c54; }
+  .seg button.on { background:#fff; color:var(--ebony); box-shadow:0 1px 2px rgba(36,33,29,.12); }
+  table.tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+  table.tbl th { text-align:left; font-weight:600; font-size:.78rem; color:#6b6f66; padding:.6rem .75rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+  table.tbl td { padding:.7rem .75rem; border-bottom:1px solid #ECEEE8; white-space:nowrap; }
+  table.tbl tr:last-child td { border-bottom:none; }
+  table.tbl tbody tr.clickable:hover { background:#F7F8F4; cursor:pointer; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .bar { height:6px; background:#ECEEE8; border-radius:99px; overflow:hidden; }
+  .bar > span { display:block; height:100%; border-radius:99px; }
+  #toast { transition:opacity .2s, transform .2s; }
+  .modal-back { background:rgba(36,33,29,.55); }
+  .podium-step { border-radius:12px 12px 0 0; }
+  @keyframes rise { from { transform:translateY(12px); opacity:0 } to { transform:none; opacity:1 } }
+  .rise { animation:rise .45s ease-out both; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; animation:none !important; } }
+  [data-sync][data-state="error"] { color:#E8A196; cursor:pointer; text-decoration:underline; }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+</style>
+</head>
+<body>
 
-// ===== ATUR PIN DI SINI =====
-// Wajib diisi karena URL API bisa dilihat siapa saja. Gunakan minimal 6 digit.
-const PIN = '123456';
+<div class="min-h-screen md:flex">
+  <!-- Sidebar (laptop) -->
+  <aside class="hidden md:flex md:w-64 flex-col bg-ebony text-ivory fixed inset-y-0 left-0 z-20">
+    <div class="px-6 pt-7 pb-6">
+      <div class="flex items-center gap-3">
+        <span class="text-4xl leading-none">♞</span>
+        <div>
+          <div class="font-display text-xl leading-tight">Klub Catur</div>
+          <div class="text-xs text-[#A79F90]">Ekstrakurikuler sekolah</div>
+        </div>
+      </div>
+    </div>
+    <div class="checker h-3 opacity-90"></div>
+    <nav class="flex-1 px-3 py-5 space-y-1 pl-6" id="sideNav">
+      <button class="nav-btn" data-action="nav" data-view="dashboard"><span class="glyph">♔</span>Dashboard</button>
+      <button class="nav-btn" data-action="nav" data-view="siswa"><span class="glyph">♙</span>Siswa &amp; Absensi</button>
+      <button class="nav-btn" data-action="nav" data-view="match"><span class="glyph">♘</span>Input Pertandingan</button>
+      <button class="nav-btn" data-action="nav" data-view="rank"><span class="glyph">♕</span>Papan Peringkat</button>
+    </nav>
+    <div class="px-6 py-5 text-xs text-[#8f877a] border-t border-white/5">
+      <span data-sync data-action="retrySave">Memuat data…</span>
+    </div>
+  </aside>
 
-const SH = { siswa: 'Siswa', absensi: 'Absensi', match: 'Pertandingan' };
-const HEAD = {
-  siswa:   ['ID', 'Nama', 'Kelas', 'Dibuat'],
-  absensi: ['Tanggal', 'ID Siswa', 'Nama', 'Status'],
-  match:   ['ID', 'Tanggal', 'ID Putih', 'Putih', 'ID Hitam', 'Hitam', 'Hasil', 'Catatan', 'Dibuat']
+  <!-- Konten -->
+  <main class="flex-1 md:ml-64 pb-28 md:pb-12">
+    <!-- Header mobile -->
+    <header class="md:hidden bg-ebony text-ivory">
+      <div class="px-4 py-3 flex items-center gap-3">
+        <span class="text-3xl leading-none">♞</span>
+        <div class="font-display text-lg">Klub Catur</div>
+        <span class="ml-auto text-xs text-[#A79F90] text-right" data-sync data-action="retrySave"></span>
+      </div>
+      <div class="checker h-2.5"></div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-6 md:pt-10">
+      <section id="view-dashboard" class="view"></section>
+      <section id="view-siswa" class="view" hidden></section>
+      <section id="view-match" class="view" hidden></section>
+      <section id="view-rank" class="view" hidden></section>
+    </div>
+  </main>
+
+  <!-- Navigasi bawah (HP) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-ebony z-30 safe-bottom border-t border-white/10" id="mobileNav">
+    <div class="flex">
+      <button class="mnav-btn" data-action="nav" data-view="dashboard"><span class="glyph">♔</span>Beranda</button>
+      <button class="mnav-btn" data-action="nav" data-view="siswa"><span class="glyph">♙</span>Absensi</button>
+      <button class="mnav-btn" data-action="nav" data-view="match"><span class="glyph">♘</span>Pertandingan</button>
+      <button class="mnav-btn" data-action="nav" data-view="rank"><span class="glyph">♕</span>Peringkat</button>
+    </div>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 z-50 hidden">
+  <div class="modal-back absolute inset-0" data-action="closeModal"></div>
+  <div class="relative h-full flex items-end sm:items-center justify-center p-0 sm:p-6 pointer-events-none">
+    <div id="modalBody" class="pointer-events-auto bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl max-h-[88vh] overflow-y-auto shadow-2xl"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-8 z-[60] bg-ebony text-ivory text-sm px-4 py-2.5 rounded-xl shadow-lg opacity-0 pointer-events-none"></div>
+
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script>
+var __defProp = Object.defineProperty;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
 };
-const STATUS = { H: 'Hadir', I: 'Izin', S: 'Sakit', A: 'Alpa' };
-const RESULT = { '1': '1-0', 'D': '½-½', '0': '0-1' };
-
-/** Dibuka di browser untuk mengecek API sudah aktif. */
-function doGet() {
-  return ContentService.createTextOutput('API Klub Catur aktif. Tempel URL ini ke API_URL di index.html.');
+const STORAGE_KEY = "klubCatur.v1";
+const ELO_START = 1200;
+const ELO_K = 32;
+const POINTS = { win: 3, draw: 1, loss: 0 };
+const STATUS = {
+  H: { label: "Hadir", color: "#3F5E4B" },
+  I: { label: "Izin", color: "#4B6A88" },
+  S: { label: "Sakit", color: "#B5893A" },
+  A: { label: "Alpa", color: "#A4483A" }
+};
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s != null ? s : "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const pad = (n) => String(n).padStart(2, "0");
+const isoOf = (d) => "".concat(d.getFullYear(), "-").concat(pad(d.getMonth() + 1), "-").concat(pad(d.getDate()));
+const today = () => isoOf(/* @__PURE__ */ new Date());
+const shiftDate = (iso, n) => {
+  const d = /* @__PURE__ */ new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return isoOf(d);
+};
+const fmtDate = (iso) => (/* @__PURE__ */ new Date(iso + "T00:00:00")).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+const longDate = (iso) => (/* @__PURE__ */ new Date(iso + "T00:00:00")).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const byName = (a, b) => a.name.localeCompare(b.name, "id");
+// =====================================================================
+// PENGATURAN: tempel URL Web App Apps Script (berakhiran /exec) di antara
+// tanda kutip agar data tersimpan di Google Sheets dan sama di semua perangkat.
+// Biarkan kosong ("") untuk menyimpan data di perangkat ini saja.
+// =====================================================================
+const API_URL = "https://script.google.com/macros/s/AKfycbyC5pEcdrJmWoLzfvoySP9D-tNNDeYswow7rqog3FPWPq2JhVutPtJmwBlg7Wf0Z07c/exec";
+function emptyState() {
+  return { students: [], sessions: {}, matches: [] };
 }
-
-/** Semua permintaan dari index.html masuk ke sini. */
-function doPost(e) {
-  let out;
+const USE_API = !!API_URL.trim();
+const SYNC_TEXT = {
+  loading: "Memuat data\u2026",
+  saving: "Menyimpan\u2026",
+  saved: "Tersimpan di Google Sheets",
+  error: "Gagal menyimpan, klik untuk coba lagi",
+  local: "Tersimpan di perangkat ini",
+  locked: "Terkunci"
+};
+let loaded = false, saving = false, pending = false, saveTimer = null, storageOk = true;
+let PIN = "";
+try {
+  PIN = localStorage.getItem("klubCatur.pin") || "";
+} catch (e) {
+}
+function rememberPin(p) {
+  PIN = p;
   try {
-    const req = JSON.parse(e.postData.contents);
-    if (PIN && String(req.pin || '') !== String(PIN)) throw new Error('PIN salah');
-    if (req.action === 'load') out = { ok: true, data: loadData_() };
-    else if (req.action === 'save') { saveData_(req.data); out = { ok: true }; }
-    else throw new Error('Aksi tidak dikenal');
-  } catch (err) {
-    out = { ok: false, error: err.message || String(err) };
-  }
-  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
-}
-
-function ss_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (!ss) throw new Error('Script harus dibuat dari Google Sheets lewat menu Ekstensi > Apps Script.');
-  return ss;
-}
-
-function sheet_(key) {
-  const ss = ss_();
-  let sh = ss.getSheetByName(SH[key]);
-  if (!sh) sh = ss.insertSheet(SH[key]);
-  if (sh.getLastRow() === 0) {
-    sh.getRange(1, 1, 1, HEAD[key].length).setValues([HEAD[key]]).setFontWeight('bold');
-    sh.setFrozenRows(1);
-  }
-  return sh;
-}
-
-function rows_(key) {
-  const sh = sheet_(key);
-  const n = sh.getLastRow() - 1;
-  if (n < 1) return [];
-  return sh.getRange(2, 1, n, HEAD[key].length).getDisplayValues().filter(r => r[0] !== '');
-}
-
-function write_(key, rows) {
-  const sh = sheet_(key);
-  const w = HEAD[key].length;
-  const last = sh.getLastRow();
-  if (last > 1) sh.getRange(2, 1, last - 1, w).clearContent();
-  if (rows.length) {
-    const rg = sh.getRange(2, 1, rows.length, w);
-    rg.setNumberFormat('@');   // simpan sebagai teks agar tanggal & ID tidak diubah Sheets
-    rg.setValues(rows);
+    if (p) localStorage.setItem("klubCatur.pin", p);
+    else localStorage.removeItem("klubCatur.pin");
+  } catch (e) {
   }
 }
-
-function loadData_() {
-  const revStatus = {}; Object.keys(STATUS).forEach(k => revStatus[STATUS[k]] = k);
-  const revResult = {}; Object.keys(RESULT).forEach(k => revResult[RESULT[k]] = k);
-
-  const students = rows_('siswa').map(r => ({ id: r[0], name: r[1], kelas: r[2], createdAt: Number(r[3]) || 0 }));
-
-  const sessions = {};
-  rows_('absensi').forEach(r => {
-    const st = revStatus[r[3]];
-    if (!st) return;
-    (sessions[r[0]] = sessions[r[0]] || {})[r[1]] = st;
+const errMsg = (err) => err && err.message ? err.message : String(err);
+const isPinError = (err) => /PIN/.test(errMsg(err));
+function setSync(st) {
+  document.querySelectorAll("[data-sync]").forEach((el) => {
+    el.textContent = SYNC_TEXT[st];
+    el.dataset.state = st;
   });
-
-  const matches = rows_('match').map(r => ({
-    id: r[0], date: r[1], p1: r[2], p2: r[4],
-    result: revResult[r[6]] || 'D', note: r[7], createdAt: Number(r[8]) || 0
-  }));
-
-  return { students, sessions, matches };
 }
-
-function saveData_(d) {
-  const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
-  try {
-    const names = {};
-    (d.students || []).forEach(s => names[s.id] = s.name);
-
-    write_('siswa', (d.students || []).map(s => [s.id, s.name, s.kelas || '', String(s.createdAt || '')]));
-
-    const abs = [];
-    Object.keys(d.sessions || {}).sort().forEach(date => {
-      const sess = d.sessions[date];
-      Object.keys(sess).forEach(id => {
-        if (STATUS[sess[id]] && names[id] !== undefined) abs.push([date, id, names[id], STATUS[sess[id]]]);
-      });
-    });
-    write_('absensi', abs);
-
-    write_('match', (d.matches || []).map(m => [
-      m.id, m.date, m.p1, names[m.p1] || '', m.p2, names[m.p2] || '',
-      RESULT[m.result] || '½-½', m.note || '', String(m.createdAt || '')
-    ]));
-  } finally {
-    lock.releaseLock();
+function api(action, data) {
+  return fetch(API_URL.trim(), {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, pin: PIN, data })
+  }).catch(() => {
+    throw new Error('Tidak bisa terhubung ke Google Sheets. Periksa internet, pastikan URL berakhiran /exec, dan akses Web App diatur ke "Siapa saja".');
+  }).then((r) => r.text()).then((t) => {
+    let res;
+    try {
+      res = JSON.parse(t);
+    } catch (e) {
+      throw new Error("Balasan server tidak dikenali. Pastikan Code.gs versi API sudah dipasang dan di-deploy ulang sebagai versi baru.");
+    }
+    if (!res.ok) throw new Error(res.error || "Permintaan gagal");
+    return res.data;
+  });
+}
+function save() {
+  if (!USE_API) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      if (storageOk) toast("Penyimpanan browser tidak tersedia. Data hilang saat halaman ditutup.");
+      storageOk = false;
+    }
+    return;
   }
+  if (!loaded) return;
+  pending = true;
+  setSync("saving");
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flush, 700);
 }
+function flush() {
+  if (saving || !pending) return;
+  pending = false;
+  saving = true;
+  api("save", state).then(() => {
+    saving = false;
+    if (pending) flush();
+    else setSync("saved");
+  }).catch((err) => {
+    saving = false;
+    if (isPinError(err)) {
+      rememberPin("");
+      loaded = false;
+      showPin("PIN sudah berubah. Masukkan PIN baru.");
+      return;
+    }
+    pending = true;
+    setSync("error");
+    toast("Gagal menyimpan: " + errMsg(err));
+  });
+}
+window.addEventListener("beforeunload", (e) => {
+  if (pending || saving) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+let state = emptyState();
+let ui = {
+  view: "dashboard",
+  sub: "absensi",
+  attDate: today(),
+  rankBy: "pts",
+  histFilter: "",
+  form: { date: today(), p1: "", p2: "", result: "", note: "" }
+};
+const studentMap = () => state.students.reduce((o, s) => {
+  o[s.id] = s;
+  return o;
+}, {});
+const sortedMatches = () => [...state.matches].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+const sessionDates = () => Object.keys(state.sessions).filter((d) => Object.keys(state.sessions[d]).length).sort().reverse();
+function computeStats() {
+  const s = {};
+  state.students.forEach((p) => s[p.id] = { played: 0, w: 0, d: 0, l: 0, pts: 0, elo: ELO_START, form: [] });
+  const deltas = {};
+  const chrono = [...state.matches].sort((a, b) => a.date.localeCompare(b.date) || a.createdAt - b.createdAt);
+  for (const m of chrono) {
+    const a = s[m.p1], b = s[m.p2];
+    if (!a || !b) continue;
+    const sa = m.result === "1" ? 1 : m.result === "D" ? 0.5 : 0;
+    const expected = 1 / (1 + Math.pow(10, (b.elo - a.elo) / 400));
+    const delta = Math.round(ELO_K * (sa - expected));
+    a.elo += delta;
+    b.elo -= delta;
+    deltas[m.id] = delta;
+    a.played++;
+    b.played++;
+    if (sa === 1) {
+      a.w++;
+      b.l++;
+      a.pts += POINTS.win;
+      b.pts += POINTS.loss;
+      a.form.push("W");
+      b.form.push("L");
+    } else if (sa === 0) {
+      b.w++;
+      a.l++;
+      b.pts += POINTS.win;
+      a.pts += POINTS.loss;
+      b.form.push("W");
+      a.form.push("L");
+    } else {
+      a.d++;
+      b.d++;
+      a.pts += POINTS.draw;
+      b.pts += POINTS.draw;
+      a.form.push("D");
+      b.form.push("D");
+    }
+  }
+  Object.values(s).forEach((x) => x.wr = x.played ? Math.round(x.w / x.played * 100) : 0);
+  return { s, deltas };
+}
+function ranking(s, by) {
+  const keys = by === "elo" ? ["elo", "pts", "w"] : by === "w" ? ["w", "pts", "elo"] : ["pts", "w", "elo"];
+  return state.students.map((p) => __spreadValues(__spreadValues({}, p), s[p.id])).sort((a, b) => {
+    if (a.played > 0 !== b.played > 0) return a.played > 0 ? -1 : 1;
+    for (const k of keys) if (b[k] !== a[k]) return b[k] - a[k];
+    return byName(a, b);
+  });
+}
+function attStats() {
+  const r = {};
+  state.students.forEach((s) => r[s.id] = { H: 0, I: 0, S: 0, A: 0, total: 0, pct: null });
+  Object.values(state.sessions).forEach((sess) => {
+    for (const [id, st] of Object.entries(sess)) if (r[id] && STATUS[st]) {
+      r[id][st]++;
+      r[id].total++;
+    }
+  });
+  Object.values(r).forEach((x) => x.pct = x.total ? Math.round(x.H / x.total * 100) : null);
+  return r;
+}
+const resultText = (r) => r === "1" ? "1\u20130" : r === "D" ? "\xBD\u2013\xBD" : "0\u20131";
+const pctColor = (p) => p == null ? "#C9CDC3" : p >= 80 ? "#3F5E4B" : p >= 60 ? "#B5893A" : "#A4483A";
+function formDots(form) {
+  const last = form.slice(-5);
+  if (!last.length) return '<span class="text-stone-400 text-xs">\u2014</span>';
+  const map = { W: ["#3F5E4B", "Menang"], D: ["#B5893A", "Seri"], L: ["#A4483A", "Kalah"] };
+  return '<span class="inline-flex gap-1">'.concat(last.map((f) => '<span class="dot" style="background:'.concat(map[f][0], '" title="').concat(map[f][1], '"></span>')).join(""), "</span>");
+}
+function matchRow(m, map, deltas, withDelete) {
+  const a = map[m.p1], b = map[m.p2];
+  const d = deltas[m.id];
+  return '\n  <li class="py-3 flex items-center gap-3">\n    <div class="w-[4.6rem] shrink-0 text-xs text-stone-500 leading-tight">'.concat(fmtDate(m.date)).concat(m.note ? '<div class="truncate text-stone-400">'.concat(esc(m.note), "</div>") : "", '</div>\n    <div class="flex-1 min-w-0 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm">\n      <span class="flex items-center justify-end gap-1.5 min-w-0 ').concat(m.result === "1" ? "font-semibold" : "text-stone-600", '"><span class="truncate">').concat(esc(a ? a.name : "(dihapus)"), '</span><span class="pc w"></span></span>\n      <span class="score">').concat(resultText(m.result), '</span>\n      <span class="flex items-center gap-1.5 min-w-0 ').concat(m.result === "0" ? "font-semibold" : "text-stone-600", '"><span class="pc b"></span><span class="truncate">').concat(esc(b ? b.name : "(dihapus)"), "</span></span>\n    </div>\n    ").concat(d != null ? '<div class="hidden sm:block w-14 text-right text-xs tabular-nums text-stone-500" title="Perubahan Elo putih / hitam">'.concat(d >= 0 ? "+" : "").concat(d, " / ").concat(-d >= 0 ? "+" : "").concat(-d, "</div>") : "", "\n    ").concat(withDelete ? '<button class="text-stone-400 hover:text-brick px-1" data-action="delMatch" data-id="'.concat(m.id, '" aria-label="Hapus pertandingan">\u2715</button>') : "", "\n  </li>");
+}
+function emptyBox(title, text, actions2 = "") {
+  return '<div class="card p-8 text-center">\n    <div class="text-5xl mb-3 text-stone-300">\u265F</div>\n    <h3 class="font-display text-xl mb-1">'.concat(title, '</h3>\n    <p class="text-stone-500 text-sm max-w-sm mx-auto">').concat(text, "</p>\n    ").concat(actions2 ? '<div class="mt-5 flex flex-wrap gap-2 justify-center">'.concat(actions2, "</div>") : "", "\n  </div>");
+}
+function renderDashboard() {
+  const el = $("#view-dashboard");
+  const { s, deltas } = computeStats();
+  const att = attStats();
+  const map = studentMap();
+  const dates = sessionDates();
+  let H = 0, T = 0;
+  Object.values(att).forEach((a) => {
+    H += a.H;
+    T += a.total;
+  });
+  const avg = T ? Math.round(H / T * 100) : null;
+  const top = ranking(s, "pts").filter((p) => p.played > 0).slice(0, 3);
+  const recent = sortedMatches().slice(0, 5);
+  const last = dates[0];
+  const head = '\n    <div class="mb-7">\n      <p class="text-sm text-stone-500">'.concat(longDate(today()), '</p>\n      <h1 class="font-display text-3xl md:text-[2.6rem] leading-tight mt-1">Papan klub hari ini</h1>\n    </div>');
+  if (!state.students.length) {
+    el.innerHTML = head + emptyBox(
+      "Belum ada anggota klub",
+      "Mulai dengan menambahkan siswa anggota ekskul, atau coba aplikasinya dulu dengan data contoh.",
+      '<button class="btn btn-primary" data-action="goAdd">Tambah siswa</button>\n       <button class="btn btn-ghost" data-action="seed">Muat data contoh</button>\n       <button class="btn btn-ghost" data-action="import">Impor dari file</button>'
+    );
+    return;
+  }
+  const tiles = [
+    ["Anggota", state.students.length, "siswa terdaftar"],
+    ["Sesi latihan", dates.length, "tanggal tercatat"],
+    ["Pertandingan", state.matches.length, "partai dimainkan"],
+    ["Kehadiran", avg == null ? "\u2013" : avg + "%", "rata-rata klub"]
+  ];
+  const order = [top[1], top[0], top[2]];
+  const glyph = ["\u2655", "\u2654", "\u2657"];
+  const heights = ["h-20", "h-28", "h-14"];
+  const rankNo = [2, 1, 3];
+  const podium = top.length ? '\n    <div class="grid grid-cols-3 gap-2 sm:gap-3 items-end pt-2">\n      '.concat(order.map((p, i) => p ? '\n        <button class="text-center rise group" style="animation-delay:'.concat([120, 0, 220][i], 'ms" data-action="player" data-id="').concat(p.id, '">\n          <div class="text-3xl sm:text-4xl ').concat(i === 1 ? "text-brass" : "text-stone-500", '">').concat(glyph[i], '</div>\n          <div class="font-semibold text-sm mt-1 truncate group-hover:underline">').concat(esc(p.name), '</div>\n          <div class="text-xs text-stone-500 mb-2">').concat(p.pts, " poin \xB7 ").concat(p.w, ' menang</div>\n          <div class="podium-step ').concat(heights[i], " ").concat(i === 1 ? "bg-ebony text-ivory" : "bg-[#E3E6DE] text-stone-600", ' flex items-start justify-center pt-2 font-display text-2xl">').concat(rankNo[i], "</div>\n        </button>") : "<div></div>").join(""), "\n    </div>") : '<p class="text-sm text-stone-500 py-6">Podium muncul setelah ada hasil pertandingan.</p>';
+  let lastSummary = '<p class="text-sm text-stone-500">Belum ada sesi latihan yang dicatat.</p>';
+  if (last) {
+    const sess = state.sessions[last];
+    const cnt = { H: 0, I: 0, S: 0, A: 0 };
+    Object.values(sess).forEach((v) => cnt[v] != null && cnt[v]++);
+    const unmarked = state.students.filter((p) => !sess[p.id]).length;
+    const absent = state.students.filter((p) => sess[p.id] && sess[p.id] !== "H");
+    lastSummary = '\n      <p class="text-sm text-stone-500 mb-3">'.concat(longDate(last), '</p>\n      <div class="flex flex-wrap gap-2 mb-3">\n        ').concat(Object.entries(cnt).map(([k, v]) => '<span class="chip"><span class="dot" style="background:'.concat(STATUS[k].color, '"></span>').concat(STATUS[k].label, " ").concat(v, "</span>")).join(""), "\n        ").concat(unmarked ? '<span class="chip">Belum diisi '.concat(unmarked, "</span>") : "", "\n      </div>\n      ").concat(absent.length ? '<ul class="text-sm space-y-1">'.concat(absent.map((p) => '<li class="flex justify-between"><span>'.concat(esc(p.name), '</span><span class="text-stone-500">').concat(STATUS[sess[p.id]].label, "</span></li>")).join(""), "</ul>") : '<p class="text-sm text-felt">Semua yang tercatat hadir.</p>');
+  }
+  el.innerHTML = head + '\n    <div class="flex flex-wrap gap-2 mb-6">\n      <button class="btn btn-primary" data-action="goAttendToday">Catat absensi hari ini</button>\n      <button class="btn btn-ghost" data-action="nav" data-view="match">Input hasil pertandingan</button>\n    </div>\n\n    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">\n      '.concat(tiles.map((t) => '\n        <div class="card p-4">\n          <div class="text-sm text-stone-500">'.concat(t[0], '</div>\n          <div class="font-display text-3xl mt-1">').concat(t[1], '</div>\n          <div class="text-xs text-stone-400 mt-0.5">').concat(t[2], "</div>\n        </div>")).join(""), '\n    </div>\n\n    <div class="grid lg:grid-cols-5 gap-4 mb-4">\n      <div class="card p-5 lg:col-span-2">\n        <div class="flex items-center justify-between mb-2">\n          <h2 class="font-display text-xl">Tiga teratas</h2>\n          <button class="text-sm text-stone-500 hover:text-ebony underline-offset-2 hover:underline" data-action="nav" data-view="rank">Lihat peringkat</button>\n        </div>\n        ').concat(podium, '\n      </div>\n      <div class="card p-5 lg:col-span-3">\n        <div class="flex items-center justify-between mb-1">\n          <h2 class="font-display text-xl">Pertandingan terakhir</h2>\n          <button class="text-sm text-stone-500 hover:text-ebony hover:underline underline-offset-2" data-action="nav" data-view="match">Semua riwayat</button>\n        </div>\n        ').concat(recent.length ? '<ul class="divide-y divide-[#ECEEE8]">'.concat(recent.map((m) => matchRow(m, map, deltas, false)).join(""), "</ul>") : '<p class="text-sm text-stone-500 py-6">Belum ada pertandingan. Hasil yang kamu input akan tampil di sini.</p>', '\n      </div>\n    </div>\n\n    <div class="grid lg:grid-cols-5 gap-4">\n      <div class="card p-5 lg:col-span-3">\n        <h2 class="font-display text-xl mb-1">Absensi sesi terakhir</h2>\n        ').concat(lastSummary, '\n      </div>\n      <div class="card p-5 lg:col-span-2">\n        <h2 class="font-display text-xl mb-1">Kelola data</h2>\n        <p class="text-sm text-stone-500 mb-4">').concat(USE_API ? "Data utama tersimpan di Google Sheets. Ekspor JSON bisa dipakai sebagai cadangan tambahan." : "Data tersimpan di browser perangkat ini saja. Ekspor JSON secara berkala sebagai cadangan.", '</p>\n        <div class="grid grid-cols-2 gap-2">\n          <button class="btn btn-ghost" data-action="export">Ekspor JSON</button>\n          <button class="btn btn-ghost" data-action="import">Impor JSON</button>\n          <button class="btn btn-ghost" data-action="seed">Data contoh</button>\n          <button class="btn btn-danger" data-action="reset">Hapus semua</button>\n          ').concat(USE_API ? '<button class="btn btn-ghost col-span-2" data-action="lock">Kunci aplikasi di perangkat ini</button>' : "", "\n        </div>\n      </div>\n    </div>");
+}
+function renderSiswa() {
+  const el = $("#view-siswa");
+  const subs = [["absensi", "Absensi"], ["data", "Data siswa"], ["rekap", "Rekap kehadiran"]];
+  const head = '\n    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">\n      <div>\n        <h1 class="font-display text-3xl md:text-[2.4rem] leading-tight">Siswa &amp; absensi</h1>\n        <p class="text-stone-500 text-sm mt-1">'.concat(state.students.length, ' anggota terdaftar</p>\n      </div>\n      <div class="seg self-start sm:self-auto overflow-x-auto max-w-full">\n        ').concat(subs.map(([k, l]) => '<button class="'.concat(ui.sub === k ? "on" : "", '" data-action="sub" data-sub="').concat(k, '">').concat(l, "</button>")).join(""), "\n      </div>\n    </div>");
+  let body = "";
+  const list = [...state.students].sort(byName);
+  if (ui.sub === "absensi") {
+    if (!list.length) {
+      body = emptyBox(
+        "Belum ada siswa",
+        "Tambahkan anggota di tab Data siswa dulu, lalu absensi bisa dicatat dengan sekali klik.",
+        '<button class="btn btn-primary" data-action="sub" data-sub="data">Ke Data siswa</button>'
+      );
+    } else {
+      const sess = state.sessions[ui.attDate] || {};
+      const cnt = { H: 0, I: 0, S: 0, A: 0 };
+      Object.values(sess).forEach((v) => cnt[v] != null && cnt[v]++);
+      const filled = Object.keys(sess).filter((id) => state.students.some((s) => s.id === id)).length;
+      body = '\n      <div class="card">\n        <div class="p-4 sm:p-5 border-b border-line flex flex-col lg:flex-row lg:items-center gap-3 justify-between">\n          <div class="flex items-center gap-2">\n            <button class="btn btn-ghost !px-3" data-action="dayShift" data-n="-1" aria-label="Hari sebelumnya">\u2039</button>\n            <input type="date" id="attDate" class="field !w-auto" value="'.concat(ui.attDate, '">\n            <button class="btn btn-ghost !px-3" data-action="dayShift" data-n="1" aria-label="Hari berikutnya">\u203A</button>\n            ').concat(ui.attDate !== today() ? '<button class="text-sm text-stone-500 hover:underline ml-1" data-action="dayToday">Hari ini</button>' : "", '\n          </div>\n          <div class="flex flex-wrap gap-2">\n            <button class="btn btn-primary" data-action="allPresent">Tandai semua hadir</button>\n            ').concat(filled ? '<button class="btn btn-danger" data-action="clearSession">Kosongkan sesi</button>' : "", '\n          </div>\n        </div>\n        <div class="px-4 sm:px-5 py-3 flex flex-wrap gap-2 bg-[#F7F8F4] border-b border-line text-sm">\n          <span class="text-stone-500 mr-1">').concat(longDate(ui.attDate), ":</span>\n          ").concat(Object.entries(cnt).map(([k, v]) => '<span class="chip"><span class="dot" style="background:'.concat(STATUS[k].color, '"></span>').concat(STATUS[k].label, " ").concat(v, "</span>")).join(""), '\n          <span class="chip">').concat(filled, "/").concat(list.length, ' terisi</span>\n        </div>\n        <ul class="divide-y divide-[#ECEEE8]">\n          ').concat(list.map((p) => '\n            <li class="px-4 sm:px-5 py-3 flex items-center gap-3">\n              <div class="flex-1 min-w-0">\n                <div class="font-medium truncate">'.concat(esc(p.name), '</div>\n                <div class="text-xs text-stone-500">').concat(esc(p.kelas || "\u2014"), '</div>\n              </div>\n              <div class="flex gap-1 sm:gap-1.5" role="group" aria-label="Status ').concat(esc(p.name), '">\n                ').concat(Object.entries(STATUS).map(([k, v]) => '\n                  <button class="st '.concat(k, " ").concat(sess[p.id] === k ? "on" : "", '" data-action="mark" data-id="').concat(p.id, '" data-st="').concat(k, '" aria-pressed="').concat(sess[p.id] === k, '" title="').concat(v.label, '">\n                    <span class="sm:hidden">').concat(k, '</span><span class="hidden sm:inline">').concat(v.label, "</span>\n                  </button>")).join(""), "\n              </div>\n            </li>")).join(""), '\n        </ul>\n      </div>\n      <p class="text-xs text-stone-500 mt-3">Klik status sekali untuk memilih, klik lagi untuk membatalkan. Perubahan tersimpan langsung.</p>');
+    }
+  }
+  if (ui.sub === "data") {
+    const classes = [...new Set(state.students.map((s2) => s2.kelas).filter(Boolean))].sort();
+    const { s } = computeStats();
+    body = '\n    <div class="grid lg:grid-cols-3 gap-4">\n      <form id="addForm" class="card p-5 lg:col-span-1 self-start" autocomplete="off">\n        <h2 class="font-display text-xl mb-4">Tambah siswa</h2>\n        <label class="block text-sm font-medium mb-1" for="fName">Nama lengkap</label>\n        <input id="fName" name="name" class="field mb-3" placeholder="Contoh: Rizky Pratama" required maxlength="60">\n        <label class="block text-sm font-medium mb-1" for="fKelas">Kelas / tingkat</label>\n        <input id="fKelas" name="kelas" class="field mb-4" placeholder="Contoh: VIII A" list="kelasList" maxlength="20">\n        <datalist id="kelasList">'.concat(classes.map((c) => '<option value="'.concat(esc(c), '">')).join(""), '</datalist>\n        <button class="btn btn-primary w-full" type="submit">Tambah siswa</button>\n      </form>\n      <div class="card lg:col-span-2 overflow-hidden">\n        ').concat(list.length ? '\n        <div class="overflow-x-auto">\n          <table class="tbl">\n            <thead><tr><th>Nama</th><th>Kelas</th><th class="num">Main</th><th class="num">Poin</th><th></th></tr></thead>\n            <tbody>\n              '.concat(list.map((p) => '\n                <tr>\n                  <td><button class="font-medium hover:underline text-left" data-action="player" data-id="'.concat(p.id, '">').concat(esc(p.name), '</button></td>\n                  <td class="text-stone-600">').concat(esc(p.kelas || "\u2014"), '</td>\n                  <td class="num">').concat(s[p.id].played, '</td>\n                  <td class="num">').concat(s[p.id].pts, '</td>\n                  <td class="text-right">\n                    <button class="text-sm text-stone-600 hover:text-ebony px-2 py-1" data-action="editStudent" data-id="').concat(p.id, '">Ubah</button>\n                    <button class="text-sm text-brick px-2 py-1 hover:underline" data-action="delStudent" data-id="').concat(p.id, '">Hapus</button>\n                  </td>\n                </tr>')).join(""), "\n            </tbody>\n          </table>\n        </div>") : '<div class="p-8 text-center text-sm text-stone-500">Belum ada siswa. Isi formulir di samping untuk menambah anggota pertama.</div>', "\n      </div>\n    </div>");
+  }
+  if (ui.sub === "rekap") {
+    const att = attStats();
+    const rows = list.map((p) => __spreadValues(__spreadValues({}, p), att[p.id])).sort((a, b) => {
+      var _a, _b;
+      return ((_a = b.pct) != null ? _a : -1) - ((_b = a.pct) != null ? _b : -1) || byName(a, b);
+    });
+    body = !list.length ? emptyBox("Belum ada data", "Rekap muncul setelah ada siswa dan absensi tercatat.") : '\n    <div class="card overflow-hidden">\n      <div class="p-4 sm:p-5 border-b border-line text-sm text-stone-500">\n        Persentase = jumlah Hadir \xF7 jumlah sesi yang tercatat untuk siswa tersebut. Total sesi latihan: <b class="text-ebony">'.concat(sessionDates().length, '</b>.\n      </div>\n      <div class="overflow-x-auto">\n        <table class="tbl">\n          <thead><tr><th>Nama</th><th>Kelas</th><th class="num">Hadir</th><th class="num">Izin</th><th class="num">Sakit</th><th class="num">Alpa</th><th style="min-width:170px">Kehadiran</th></tr></thead>\n          <tbody>\n            ').concat(rows.map((r) => {
+      var _a;
+      return '\n              <tr class="clickable" data-action="player" data-id="'.concat(r.id, '">\n                <td class="font-medium">').concat(esc(r.name), '</td>\n                <td class="text-stone-600">').concat(esc(r.kelas || "\u2014"), '</td>\n                <td class="num">').concat(r.H, '</td><td class="num">').concat(r.I, '</td><td class="num">').concat(r.S, '</td><td class="num">').concat(r.A, '</td>\n                <td>\n                  <div class="flex items-center gap-2">\n                    <div class="bar flex-1"><span style="width:').concat((_a = r.pct) != null ? _a : 0, "%;background:").concat(pctColor(r.pct), '"></span></div>\n                    <span class="w-10 text-right tabular-nums font-semibold" style="color:').concat(pctColor(r.pct), '">').concat(r.pct == null ? "\u2013" : r.pct + "%", "</span>\n                  </div>\n                </td>\n              </tr>");
+    }).join(""), "\n          </tbody>\n        </table>\n      </div>\n    </div>");
+  }
+  el.innerHTML = head + body;
+}
+function renderMatch() {
+  var _a, _b;
+  const el = $("#view-match");
+  const map = studentMap();
+  const { deltas } = computeStats();
+  const list = [...state.students].sort(byName);
+  const f = ui.form;
+  const opt = (sel, other) => '<option value="">Pilih siswa\u2026</option>' + list.map((p) => '<option value="'.concat(p.id, '" ').concat(sel === p.id ? "selected" : "", " ").concat(other === p.id ? "disabled" : "", ">").concat(esc(p.name)).concat(p.kelas ? " (" + esc(p.kelas) + ")" : "", "</option>")).join("");
+  const n1 = ((_a = map[f.p1]) == null ? void 0 : _a.name) || "Putih", n2 = ((_b = map[f.p2]) == null ? void 0 : _b.name) || "Hitam";
+  const head = '\n    <div class="mb-6">\n      <h1 class="font-display text-3xl md:text-[2.4rem] leading-tight">Input pertandingan</h1>\n      <p class="text-stone-500 text-sm mt-1">Catat hasil partai; poin, Elo, dan peringkat terhitung otomatis.</p>\n    </div>';
+  if (list.length < 2) {
+    el.innerHTML = head + emptyBox(
+      "Butuh minimal dua siswa",
+      "Tambahkan anggota terlebih dahulu agar bisa mencatat pertandingan.",
+      '<button class="btn btn-primary" data-action="goAdd">Tambah siswa</button>'
+    );
+    return;
+  }
+  let hist = sortedMatches();
+  if (ui.histFilter) hist = hist.filter((m) => m.p1 === ui.histFilter || m.p2 === ui.histFilter);
+  el.innerHTML = head + '\n  <div class="grid lg:grid-cols-5 gap-4">\n    <form id="matchForm" class="card p-5 lg:col-span-2 self-start" autocomplete="off">\n      <h2 class="font-display text-xl mb-4">Hasil baru</h2>\n      <label class="block text-sm font-medium mb-1" for="mDate">Tanggal</label>\n      <input type="date" id="mDate" data-field="date" class="field mb-3" value="'.concat(f.date, '" required>\n\n      <label class="block text-sm font-medium mb-1" for="mP1"><span class="pc w mr-1 align-[-1px]"></span>Pemain 1 (Putih)</label>\n      <select id="mP1" data-field="p1" class="field mb-3">').concat(opt(f.p1, f.p2), '</select>\n\n      <label class="block text-sm font-medium mb-1" for="mP2"><span class="pc b mr-1 align-[-1px]"></span>Pemain 2 (Hitam)</label>\n      <select id="mP2" data-field="p2" class="field mb-4">').concat(opt(f.p2, f.p1), '</select>\n\n      <div class="text-sm font-medium mb-2">Hasil</div>\n      <div class="grid grid-cols-3 gap-2 mb-4">\n        <button type="button" class="res-btn ').concat(f.result === "1" ? "on" : "", '" data-action="pickResult" data-r="1">\n          <div class="font-display text-lg">1\u20130</div><div class="text-xs truncate opacity-80">').concat(esc(n1), ' menang</div>\n        </button>\n        <button type="button" class="res-btn ').concat(f.result === "D" ? "on" : "", '" data-action="pickResult" data-r="D">\n          <div class="font-display text-lg">\xBD\u2013\xBD</div><div class="text-xs opacity-80">Seri</div>\n        </button>\n        <button type="button" class="res-btn ').concat(f.result === "0" ? "on" : "", '" data-action="pickResult" data-r="0">\n          <div class="font-display text-lg">0\u20131</div><div class="text-xs truncate opacity-80">').concat(esc(n2), ' menang</div>\n        </button>\n      </div>\n\n      <label class="block text-sm font-medium mb-1" for="mNote">Catatan <span class="text-stone-400 font-normal">(opsional)</span></label>\n      <input id="mNote" data-field="note" class="field mb-5" placeholder="Contoh: Babak 2 turnamen mini" maxlength="60" value="').concat(esc(f.note), '">\n\n      <button class="btn btn-primary w-full" type="submit">Simpan hasil</button>\n      <p class="text-xs text-stone-500 mt-3">Menang +').concat(POINTS.win, " poin, seri +").concat(POINTS.draw, ", kalah ").concat(POINTS.loss, ". Elo awal ").concat(ELO_START, ", faktor K ").concat(ELO_K, '.</p>\n    </form>\n\n    <div class="card lg:col-span-3 p-5">\n      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">\n        <h2 class="font-display text-xl">Riwayat pertandingan</h2>\n        <select id="histFilter" class="field !w-auto text-sm">\n          <option value="">Semua siswa</option>\n          ').concat(list.map((p) => '<option value="'.concat(p.id, '" ').concat(ui.histFilter === p.id ? "selected" : "", ">").concat(esc(p.name), "</option>")).join(""), "\n        </select>\n      </div>\n      ").concat(hist.length ? '<ul class="divide-y divide-[#ECEEE8]">'.concat(hist.map((m) => matchRow(m, map, deltas, true)).join(""), '</ul>\n        <p class="text-xs text-stone-500 mt-3">').concat(hist.length, " partai. Angka di kanan adalah perubahan Elo (putih / hitam).</p>") : '<p class="text-sm text-stone-500 py-8 text-center">Belum ada pertandingan yang cocok.</p>', "\n    </div>\n  </div>");
+}
+function renderRank() {
+  const el = $("#view-rank");
+  const { s } = computeStats();
+  const rows = ranking(s, ui.rankBy);
+  const sorts = [["pts", "Poin"], ["elo", "Elo"], ["w", "Kemenangan"]];
+  const glyph = ["\u2654", "\u2655", "\u2657"];
+  el.innerHTML = '\n    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">\n      <div>\n        <h1 class="font-display text-3xl md:text-[2.4rem] leading-tight">Papan peringkat</h1>\n        <p class="text-stone-500 text-sm mt-1">Diperbarui otomatis setiap ada hasil baru. Klik nama untuk melihat statistik.</p>\n      </div>\n      <div class="seg self-start sm:self-auto" aria-label="Urutkan berdasarkan">\n        '.concat(sorts.map(([k, l]) => '<button class="'.concat(ui.rankBy === k ? "on" : "", '" data-action="rankBy" data-by="').concat(k, '">').concat(l, "</button>")).join(""), "\n      </div>\n    </div>\n    ").concat(!rows.length ? emptyBox("Peringkat masih kosong", "Tambahkan siswa dan catat pertandingan untuk mengisi papan peringkat.") : '\n    <div class="card overflow-hidden">\n      <div class="overflow-x-auto">\n        <table class="tbl">\n          <thead><tr>\n            <th class="w-12">#</th><th>Siswa</th><th class="num">Main</th><th class="num">M</th><th class="num">S</th><th class="num">K</th>\n            <th class="num">Win rate</th><th>5 terakhir</th>\n            <th class="num '.concat(ui.rankBy === "pts" ? "text-ebony" : "", '">Poin</th>\n            <th class="num ').concat(ui.rankBy === "elo" ? "text-ebony" : "", '">Elo</th>\n          </tr></thead>\n          <tbody>\n            ').concat(rows.map((r, i) => {
+    const ranked = r.played > 0;
+    return '\n              <tr class="clickable '.concat(i < 3 && ranked ? "bg-[#FBFAF5]" : "", '" data-action="player" data-id="').concat(r.id, '">\n                <td class="font-display text-lg ').concat(i === 0 && ranked ? "text-brass" : "text-stone-500", '">').concat(ranked ? i < 3 ? '<span title="Peringkat '.concat(i + 1, '">').concat(glyph[i], "</span>") : i + 1 : "\u2013", '</td>\n                <td>\n                  <div class="font-semibold ').concat(ranked ? "" : "text-stone-500", '">').concat(esc(r.name), '</div>\n                  <div class="text-xs text-stone-500">').concat(esc(r.kelas || "\u2014"), '</div>\n                </td>\n                <td class="num">').concat(r.played, '</td>\n                <td class="num text-felt font-medium">').concat(r.w, '</td>\n                <td class="num text-brass font-medium">').concat(r.d, '</td>\n                <td class="num text-brick font-medium">').concat(r.l, '</td>\n                <td class="num">').concat(r.played ? r.wr + "%" : "\u2013", "</td>\n                <td>").concat(formDots(r.form), '</td>\n                <td class="num font-display text-lg ').concat(ui.rankBy === "pts" ? "" : "text-stone-500", '">').concat(r.pts, '</td>\n                <td class="num ').concat(ui.rankBy === "elo" ? "font-display text-lg" : "text-stone-500", '">').concat(r.elo, "</td>\n              </tr>");
+  }).join(""), '\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-stone-500 mt-3">\n      <span>M = Menang, S = Seri, K = Kalah</span>\n      <span class="inline-flex items-center gap-1.5"><span class="dot" style="background:#3F5E4B"></span>Menang</span>\n      <span class="inline-flex items-center gap-1.5"><span class="dot" style="background:#B5893A"></span>Seri</span>\n      <span class="inline-flex items-center gap-1.5"><span class="dot" style="background:#A4483A"></span>Kalah</span>\n      <span>Siswa yang belum pernah bertanding ditaruh paling bawah.</span>\n    </div>'));
+}
+function openModal(html) {
+  $("#modalBody").innerHTML = html;
+  $("#modal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  $("#modal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+function showPlayer(id) {
+  var _a;
+  const p = state.students.find((x) => x.id === id);
+  if (!p) return;
+  const { s, deltas } = computeStats();
+  const st = s[id], att = attStats()[id], map = studentMap();
+  const rankPos = ranking(s, "pts").findIndex((r) => r.id === id) + 1;
+  const ms = sortedMatches().filter((m) => m.p1 === id || m.p2 === id).slice(0, 8);
+  const box = (l, v, c = "") => '<div class="bg-[#F4F5F1] rounded-xl p-3"><div class="text-xs text-stone-500">'.concat(l, '</div><div class="font-display text-2xl ').concat(c, '">').concat(v, "</div></div>");
+  openModal('\n    <div class="checker h-2.5 rounded-t-2xl"></div>\n    <div class="p-5 sm:p-6">\n      <div class="flex items-start justify-between gap-3 mb-5">\n        <div>\n          <h3 class="font-display text-2xl">'.concat(esc(p.name), '</h3>\n          <p class="text-sm text-stone-500">').concat(esc(p.kelas || "Kelas belum diisi")).concat(st.played ? " \xB7 Peringkat ".concat(rankPos, " (poin)") : "", '</p>\n        </div>\n        <button class="text-stone-400 hover:text-ebony text-xl px-2" data-action="closeModal" aria-label="Tutup">\u2715</button>\n      </div>\n      <div class="grid grid-cols-3 gap-2 mb-2">\n        ').concat(box("Total main", st.played)).concat(box("Poin", st.pts)).concat(box("Elo", st.elo), '\n      </div>\n      <div class="grid grid-cols-4 gap-2 mb-5">\n        ').concat(box("Menang", st.w, "text-felt")).concat(box("Seri", st.d, "text-brass")).concat(box("Kalah", st.l, "text-brick")).concat(box("Win rate", st.played ? st.wr + "%" : "\u2013"), '\n      </div>\n      <div class="mb-5">\n        <div class="flex justify-between text-sm mb-1.5"><span class="font-medium">Kehadiran</span><span style="color:').concat(pctColor(att.pct), '" class="font-semibold">').concat(att.pct == null ? "Belum ada data" : att.pct + "%", '</span></div>\n        <div class="bar"><span style="width:').concat((_a = att.pct) != null ? _a : 0, "%;background:").concat(pctColor(att.pct), '"></span></div>\n        <div class="flex flex-wrap gap-2 mt-2">').concat(Object.entries(STATUS).map(([k, v]) => '<span class="chip"><span class="dot" style="background:'.concat(v.color, '"></span>').concat(v.label, " ").concat(att[k], "</span>")).join(""), '</div>\n      </div>\n      <h4 class="font-semibold text-sm mb-1">Pertandingan terbaru</h4>\n      ').concat(ms.length ? '<ul class="divide-y divide-[#ECEEE8]">'.concat(ms.map((m) => matchRow(m, map, deltas, false)).join(""), "</ul>") : '<p class="text-sm text-stone-500 py-3">Belum pernah bertanding.</p>', "\n    </div>"));
+}
+function editStudent(id) {
+  const p = state.students.find((x) => x.id === id);
+  if (!p) return;
+  openModal('\n    <form id="editForm" data-id="'.concat(p.id, '" class="p-5 sm:p-6" autocomplete="off">\n      <div class="flex items-center justify-between mb-4">\n        <h3 class="font-display text-2xl">Ubah data siswa</h3>\n        <button type="button" class="text-stone-400 hover:text-ebony text-xl px-2" data-action="closeModal" aria-label="Tutup">\u2715</button>\n      </div>\n      <label class="block text-sm font-medium mb-1" for="eName">Nama lengkap</label>\n      <input id="eName" name="name" class="field mb-3" value="').concat(esc(p.name), '" required maxlength="60">\n      <label class="block text-sm font-medium mb-1" for="eKelas">Kelas / tingkat</label>\n      <input id="eKelas" name="kelas" class="field mb-5" value="').concat(esc(p.kelas), '" maxlength="20">\n      <div class="flex gap-2 justify-end">\n        <button type="button" class="btn btn-ghost" data-action="closeModal">Batal</button>\n        <button type="submit" class="btn btn-primary">Simpan perubahan</button>\n      </div>\n    </form>'));
+  setTimeout(() => {
+    var _a;
+    return (_a = $("#eName")) == null ? void 0 : _a.focus();
+  }, 30);
+}
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.style.opacity = "1";
+  t.style.transform = "translate(-50%, 0)";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    t.style.opacity = "0";
+    t.style.transform = "translate(-50%, 8px)";
+  }, 2400);
+}
+const RENDER = { dashboard: renderDashboard, siswa: renderSiswa, match: renderMatch, rank: renderRank };
+function render() {
+  RENDER[ui.view]();
+}
+function go(view) {
+  ui.view = view;
+  document.querySelectorAll(".view").forEach((v) => v.hidden = v.id !== "view-" + view);
+  document.querySelectorAll('[data-action="nav"]').forEach((b) => {
+    if (b.closest("#sideNav") || b.closest("#mobileNav")) b.classList.toggle("active", b.dataset.view === view);
+  });
+  render();
+  window.scrollTo({ top: 0 });
+}
+function commit(msg) {
+  save();
+  render();
+  if (msg) toast(msg);
+}
+function seed() {
+  if (state.students.length && !confirm("Data contoh akan MENGGANTI semua data yang ada. Lanjutkan?")) return;
+  const names = ["Ahmad Fauzi", "Siti Nurhaliza", "Rizky Pratama", "Dewi Lestari", "Bagas Saputra", "Nabila Putri", "Fajar Ramadhan", "Intan Permata", "Yoga Aditya", "Salsa Amelia"];
+  const kelas = ["VII A", "VII B", "VIII A", "VIII C", "IX B"];
+  const now = Date.now();
+  const students = names.map((n, i) => ({ id: uid() + i, name: n, kelas: kelas[i % kelas.length], createdAt: now + i }));
+  const strength = students.map(() => Math.random());
+  const sessions = {}, matches = [];
+  for (let w = 5; w >= 0; w--) {
+    const d = shiftDate(today(), -7 * w), sess = {};
+    students.forEach((p) => {
+      const r = Math.random();
+      sess[p.id] = r < 0.78 ? "H" : r < 0.87 ? "I" : r < 0.94 ? "S" : "A";
+    });
+    sessions[d] = sess;
+    const present = students.map((_, i) => i).filter((i) => sess[students[i].id] === "H").sort(() => Math.random() - 0.5);
+    for (let k = 0; k + 1 < present.length && k < 8; k += 2) {
+      const i = present[k], j = present[k + 1], diff = strength[i] - strength[j], r = Math.random();
+      const result = r < 0.45 + diff * 0.4 ? "1" : r < 0.62 + diff * 0.3 ? "D" : "0";
+      matches.push({ id: uid() + matches.length, date: d, p1: students[i].id, p2: students[j].id, result, note: "", createdAt: now + matches.length });
+    }
+  }
+  state = { students, sessions, matches };
+  ui.form = { date: today(), p1: "", p2: "", result: "", note: "" };
+  ui.histFilter = "";
+  commit("Data contoh dimuat");
+}
+const actions = {
+  nav: (el) => {
+    go(el.dataset.view);
+  },
+  sub: (el) => {
+    ui.sub = el.dataset.sub;
+    render();
+  },
+  goAdd: () => {
+    ui.sub = "data";
+    go("siswa");
+    setTimeout(() => {
+      var _a;
+      return (_a = $("#fName")) == null ? void 0 : _a.focus();
+    }, 50);
+  },
+  goAttendToday: () => {
+    ui.sub = "absensi";
+    ui.attDate = today();
+    go("siswa");
+  },
+  dayShift: (el) => {
+    ui.attDate = shiftDate(ui.attDate, +el.dataset.n);
+    render();
+  },
+  dayToday: () => {
+    ui.attDate = today();
+    render();
+  },
+  mark: (el) => {
+    const { id, st } = el.dataset, d = ui.attDate;
+    const sess = state.sessions[d] || (state.sessions[d] = {});
+    if (sess[id] === st) delete sess[id];
+    else sess[id] = st;
+    if (!Object.keys(sess).length) delete state.sessions[d];
+    commit();
+  },
+  allPresent: () => {
+    const sess = state.sessions[ui.attDate] || (state.sessions[ui.attDate] = {});
+    state.students.forEach((p) => {
+      if (!sess[p.id]) sess[p.id] = "H";
+    });
+    commit("Siswa yang belum diisi ditandai Hadir");
+  },
+  clearSession: () => {
+    if (!confirm("Hapus semua absensi tanggal ".concat(fmtDate(ui.attDate), "?"))) return;
+    delete state.sessions[ui.attDate];
+    commit("Absensi sesi dikosongkan");
+  },
+  editStudent: (el) => editStudent(el.dataset.id),
+  delStudent: (el) => {
+    const p = state.students.find((x) => x.id === el.dataset.id);
+    if (!p) return;
+    const n = state.matches.filter((m) => m.p1 === p.id || m.p2 === p.id).length;
+    if (!confirm("Hapus ".concat(p.name, "?\nData absensinya").concat(n ? " dan ".concat(n, " pertandingannya") : "", " juga akan dihapus."))) return;
+    state.students = state.students.filter((x) => x.id !== p.id);
+    state.matches = state.matches.filter((m) => m.p1 !== p.id && m.p2 !== p.id);
+    for (const d of Object.keys(state.sessions)) {
+      delete state.sessions[d][p.id];
+      if (!Object.keys(state.sessions[d]).length) delete state.sessions[d];
+    }
+    if (ui.form.p1 === p.id) ui.form.p1 = "";
+    if (ui.form.p2 === p.id) ui.form.p2 = "";
+    if (ui.histFilter === p.id) ui.histFilter = "";
+    commit("Siswa dihapus");
+  },
+  player: (el) => showPlayer(el.dataset.id),
+  pickResult: (el) => {
+    ui.form.result = el.dataset.r;
+    render();
+  },
+  delMatch: (el) => {
+    if (!confirm("Hapus hasil pertandingan ini? Poin dan Elo akan dihitung ulang.")) return;
+    state.matches = state.matches.filter((m) => m.id !== el.dataset.id);
+    commit("Pertandingan dihapus");
+  },
+  rankBy: (el) => {
+    ui.rankBy = el.dataset.by;
+    render();
+  },
+  closeModal: () => closeModal(),
+  lock: () => {
+    if (pending || saving) return toast("Tunggu sampai data selesai tersimpan");
+    rememberPin("");
+    loaded = false;
+    state = emptyState();
+    showPin("");
+  },
+  retrySave: (el) => {
+    if (el.dataset.state === "error") {
+      pending = true;
+      flush();
+    }
+  },
+  seed: () => seed(),
+  export: () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "klub-catur-".concat(today(), ".json");
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1e3);
+    toast("File cadangan diunduh");
+  },
+  import: () => $("#importFile").click(),
+  reset: () => {
+    if (!confirm("Hapus SEMUA data siswa, absensi, dan pertandingan? Tindakan ini tidak bisa dibatalkan.")) return;
+    state = emptyState();
+    ui.form = { date: today(), p1: "", p2: "", result: "", note: "" };
+    ui.histFilter = "";
+    commit("Semua data dihapus");
+  }
+};
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-action]");
+  if (!el) return;
+  if (USE_API && !loaded && el.dataset.action !== "retrySave") return;
+  const fn = actions[el.dataset.action];
+  if (!fn) return;
+  if (el.closest("#modalBody") && el.dataset.action === "player") return;
+  if (el.closest("#modal") && el.dataset.action !== "closeModal") closeModal();
+  fn(el, e);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
+});
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.id === "attDate" && t.value) {
+    ui.attDate = t.value;
+    render();
+  } else if (t.id === "histFilter") {
+    ui.histFilter = t.value;
+    render();
+  } else if (t.dataset.field && t.dataset.field !== "note") {
+    ui.form[t.dataset.field] = t.value;
+    render();
+  } else if (t.id === "importFile" && t.files[0]) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const d = JSON.parse(reader.result);
+        if (!Array.isArray(d.students) || !Array.isArray(d.matches) || typeof d.sessions !== "object") throw new Error("format");
+        if (!confirm("Impor ".concat(d.students.length, " siswa dan ").concat(d.matches.length, " pertandingan? Data saat ini akan diganti."))) return;
+        state = { students: d.students, sessions: d.sessions || {}, matches: d.matches };
+        commit("Data berhasil diimpor");
+      } catch (e2) {
+        toast("File tidak dikenali. Gunakan file JSON hasil Ekspor dari aplikasi ini.");
+      }
+      t.value = "";
+    };
+    reader.readAsText(t.files[0]);
+  }
+});
+document.addEventListener("input", (e) => {
+  if (e.target.dataset.field === "note") ui.form.note = e.target.value;
+});
+document.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const form = e.target;
+  if (form.id === "pinForm") {
+    const p = $("#pinInput").value.trim();
+    if (p) {
+      rememberPin(p);
+      start();
+    }
+    return;
+  }
+  if (form.id === "addForm") {
+    const name = form.elements.name.value.trim(), kelas = form.elements.kelas.value.trim();
+    if (!name) return;
+    if (state.students.some((s) => s.name.toLowerCase() === name.toLowerCase() && (s.kelas || "") === kelas)) {
+      toast("Siswa dengan nama dan kelas itu sudah ada");
+      return;
+    }
+    state.students.push({ id: uid(), name, kelas, createdAt: Date.now() });
+    commit("".concat(name, " ditambahkan"));
+    setTimeout(() => {
+      var _a;
+      return (_a = $("#fName")) == null ? void 0 : _a.focus();
+    }, 30);
+  }
+  if (form.id === "editForm") {
+    const p = state.students.find((x) => x.id === form.dataset.id);
+    if (!p) return;
+    p.name = form.elements.name.value.trim() || p.name;
+    p.kelas = form.elements.kelas.value.trim();
+    closeModal();
+    commit("Perubahan disimpan");
+  }
+  if (form.id === "matchForm") {
+    const f = ui.form;
+    f.date = $("#mDate").value || today();
+    if (!f.p1 || !f.p2) return toast("Pilih Pemain 1 dan Pemain 2");
+    if (f.p1 === f.p2) return toast("Pemain 1 dan Pemain 2 harus berbeda");
+    if (!f.result) return toast("Pilih hasil pertandingan");
+    state.matches.push({ id: uid(), date: f.date, p1: f.p1, p2: f.p2, result: f.result, note: f.note.trim(), createdAt: Date.now() });
+    ui.form = { date: f.date, p1: "", p2: "", result: "", note: "" };
+    commit("Hasil pertandingan disimpan");
+  }
+});
+function showOnly(view) {
+  document.querySelectorAll(".view").forEach((v) => v.hidden = v.id !== "view-" + view);
+}
+function showPin(msg) {
+  setSync("locked");
+  showOnly("dashboard");
+  $("#view-dashboard").innerHTML = '\n    <form id="pinForm" class="card p-7 sm:p-8 max-w-sm mx-auto text-center mt-4" autocomplete="off">\n      <div class="text-5xl mb-2">\u265E</div>\n      <h2 class="font-display text-2xl mb-1">Masukkan PIN</h2>\n      <p class="text-sm text-stone-500 mb-5">Aplikasi ini dikunci dengan PIN guru.</p>\n      <input id="pinInput" type="password" inputmode="numeric" class="field text-center text-lg tracking-widest mb-3" required>\n      '.concat(msg ? '<p class="text-sm text-brick mb-3">'.concat(esc(msg), "</p>") : "", '\n      <button class="btn btn-primary w-full" type="submit">Buka aplikasi</button>\n    </form>');
+  setTimeout(() => {
+    const i = $("#pinInput");
+    if (i) i.focus();
+  }, 50);
+}
+function start() {
+  if (!USE_API) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        state = { students: d.students || [], sessions: d.sessions || {}, matches: d.matches || [] };
+      }
+    } catch (e) {
+    }
+    loaded = true;
+    setSync("local");
+    go("dashboard");
+    return;
+  }
+  setSync("loading");
+  showOnly("dashboard");
+  $("#view-dashboard").innerHTML = '<div class="card p-10 text-center text-stone-500"><div class="text-5xl mb-3 text-stone-300">\u265E</div>Memuat data dari Google Sheets\u2026</div>';
+  const slow = setTimeout(() => {
+    if (!loaded) $("#view-dashboard").innerHTML = emptyBox("Masih memuat\u2026", "Koneksi sepertinya lambat. Tunggu sebentar, atau muat ulang halaman.");
+  }, 2e4);
+  api("load").then((d) => {
+    clearTimeout(slow);
+    state = { students: d.students || [], sessions: d.sessions || {}, matches: d.matches || [] };
+    loaded = true;
+    setSync("saved");
+    go("dashboard");
+  }).catch((err) => {
+    clearTimeout(slow);
+    if (isPinError(err)) {
+      showPin(PIN ? "PIN salah, coba lagi." : "");
+      rememberPin("");
+      return;
+    }
+    setSync("error");
+    $("#view-dashboard").innerHTML = emptyBox("Data gagal dimuat", esc(errMsg(err)) + " Muat ulang halaman untuk mencoba lagi.");
+  });
+}
+start();
+</script>
+</body>
+</html>
