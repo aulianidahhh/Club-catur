@@ -1,0 +1,122 @@
+/**
+ * KLUB CATUR — API Google Apps Script untuk versi GitHub Pages
+ * Data disimpan di spreadsheet induk dalam 3 sheet: Siswa, Absensi, Pertandingan.
+ * Buat script ini dari Google Sheets (Ekstensi > Apps Script).
+ */
+
+// ===== ATUR PIN DI SINI =====
+// Wajib diisi karena URL API bisa dilihat siapa saja. Gunakan minimal 6 digit.
+const PIN = '123456';
+
+const SH = { siswa: 'Siswa', absensi: 'Absensi', match: 'Pertandingan' };
+const HEAD = {
+  siswa:   ['ID', 'Nama', 'Kelas', 'Dibuat'],
+  absensi: ['Tanggal', 'ID Siswa', 'Nama', 'Status'],
+  match:   ['ID', 'Tanggal', 'ID Putih', 'Putih', 'ID Hitam', 'Hitam', 'Hasil', 'Catatan', 'Dibuat']
+};
+const STATUS = { H: 'Hadir', I: 'Izin', S: 'Sakit', A: 'Alpa' };
+const RESULT = { '1': '1-0', 'D': '½-½', '0': '0-1' };
+
+/** Dibuka di browser untuk mengecek API sudah aktif. */
+function doGet() {
+  return ContentService.createTextOutput('API Klub Catur aktif. Tempel URL ini ke API_URL di index.html.');
+}
+
+/** Semua permintaan dari index.html masuk ke sini. */
+function doPost(e) {
+  let out;
+  try {
+    const req = JSON.parse(e.postData.contents);
+    if (PIN && String(req.pin || '') !== String(PIN)) throw new Error('PIN salah');
+    if (req.action === 'load') out = { ok: true, data: loadData_() };
+    else if (req.action === 'save') { saveData_(req.data); out = { ok: true }; }
+    else throw new Error('Aksi tidak dikenal');
+  } catch (err) {
+    out = { ok: false, error: err.message || String(err) };
+  }
+  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function ss_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error('Script harus dibuat dari Google Sheets lewat menu Ekstensi > Apps Script.');
+  return ss;
+}
+
+function sheet_(key) {
+  const ss = ss_();
+  let sh = ss.getSheetByName(SH[key]);
+  if (!sh) sh = ss.insertSheet(SH[key]);
+  if (sh.getLastRow() === 0) {
+    sh.getRange(1, 1, 1, HEAD[key].length).setValues([HEAD[key]]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function rows_(key) {
+  const sh = sheet_(key);
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return [];
+  return sh.getRange(2, 1, n, HEAD[key].length).getDisplayValues().filter(r => r[0] !== '');
+}
+
+function write_(key, rows) {
+  const sh = sheet_(key);
+  const w = HEAD[key].length;
+  const last = sh.getLastRow();
+  if (last > 1) sh.getRange(2, 1, last - 1, w).clearContent();
+  if (rows.length) {
+    const rg = sh.getRange(2, 1, rows.length, w);
+    rg.setNumberFormat('@');   // simpan sebagai teks agar tanggal & ID tidak diubah Sheets
+    rg.setValues(rows);
+  }
+}
+
+function loadData_() {
+  const revStatus = {}; Object.keys(STATUS).forEach(k => revStatus[STATUS[k]] = k);
+  const revResult = {}; Object.keys(RESULT).forEach(k => revResult[RESULT[k]] = k);
+
+  const students = rows_('siswa').map(r => ({ id: r[0], name: r[1], kelas: r[2], createdAt: Number(r[3]) || 0 }));
+
+  const sessions = {};
+  rows_('absensi').forEach(r => {
+    const st = revStatus[r[3]];
+    if (!st) return;
+    (sessions[r[0]] = sessions[r[0]] || {})[r[1]] = st;
+  });
+
+  const matches = rows_('match').map(r => ({
+    id: r[0], date: r[1], p1: r[2], p2: r[4],
+    result: revResult[r[6]] || 'D', note: r[7], createdAt: Number(r[8]) || 0
+  }));
+
+  return { students, sessions, matches };
+}
+
+function saveData_(d) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const names = {};
+    (d.students || []).forEach(s => names[s.id] = s.name);
+
+    write_('siswa', (d.students || []).map(s => [s.id, s.name, s.kelas || '', String(s.createdAt || '')]));
+
+    const abs = [];
+    Object.keys(d.sessions || {}).sort().forEach(date => {
+      const sess = d.sessions[date];
+      Object.keys(sess).forEach(id => {
+        if (STATUS[sess[id]] && names[id] !== undefined) abs.push([date, id, names[id], STATUS[sess[id]]]);
+      });
+    });
+    write_('absensi', abs);
+
+    write_('match', (d.matches || []).map(m => [
+      m.id, m.date, m.p1, names[m.p1] || '', m.p2, names[m.p2] || '',
+      RESULT[m.result] || '½-½', m.note || '', String(m.createdAt || '')
+    ]));
+  } finally {
+    lock.releaseLock();
+  }
+}
